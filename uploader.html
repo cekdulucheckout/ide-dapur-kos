@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Foto ke Link — GitHub Image Uploader</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg-color: #FAF7F2;
+      --surface-color: #FFFFFF;
+      --text-primary: #2C2621;
+      --text-secondary: #756B62;
+      --accent-wood: #A67B5B;
+      --accent-wood-light: #EFE7DD;
+      --success-green: #16A34A;
+      --border-color: #EAE2D7;
+      --radius-lg: 16px;
+      --radius-md: 10px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-primary);
+      padding: 24px 16px 60px;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    header h1 {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    header p {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    /* Card Pengaturan GitHub */
+    .card {
+      background: var(--surface-color);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      margin-bottom: 18px;
+      box-shadow: 0 4px 14px rgba(44, 38, 33, 0.04);
+    }
+
+    .settings-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .settings-header h2 {
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .badge-status {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--accent-wood-light);
+      color: var(--accent-wood);
+    }
+
+    .badge-status.ready {
+      background: #DCFCE7;
+      color: var(--success-green);
+    }
+
+    .settings-body {
+      margin-top: 14px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .settings-body.hidden {
+      display: none;
+    }
+
+    .field label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: var(--text-secondary);
+    }
+
+    .field input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-md);
+      font-family: inherit;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .field input:focus {
+      border-color: var(--accent-wood);
+    }
+
+    .btn-save {
+      background: var(--text-primary);
+      color: #FFFFFF;
+      border: none;
+      padding: 10px 16px;
+      border-radius: var(--radius-md);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    /* Area Dropzone Upload */
+    .dropzone {
+      border: 2px dashed var(--accent-wood);
+      background: var(--surface-color);
+      border-radius: var(--radius-lg);
+      padding: 36px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-bottom: 18px;
+    }
+
+    .dropzone:hover, .dropzone.dragover {
+      background: var(--accent-wood-light);
+    }
+
+    .dropzone-icon {
+      font-size: 36px;
+      margin-bottom: 8px;
+    }
+
+    .dropzone h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .dropzone p {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    #fileInput {
+      display: none;
+    }
+
+    /* Hasil Link */
+    .result-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .result-item {
+      background: var(--surface-color);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .result-thumb {
+      width: 56px;
+      height: 56px;
+      border-radius: 8px;
+      object-fit: cover;
+      background: #F2ECE4;
+      flex-shrink: 0;
+    }
+
+    .result-info {
+      flex-grow: 1;
+      min-width: 0;
+    }
+
+    .result-name {
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .result-url {
+      width: 100%;
+      padding: 6px 8px;
+      font-size: 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      background: var(--bg-color);
+      color: var(--text-primary);
+    }
+
+    .btn-copy {
+      background: var(--accent-wood);
+      color: #FFFFFF;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .btn-copy.copied {
+      background: var(--success-green);
+    }
+
+    .status-text {
+      font-size: 12px;
+      color: var(--accent-wood);
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>Foto ke Link Otomatis</h1>
+      <p>Ubah foto produk (.jpg / .png) menjadi link langsung via GitHub untuk ditempel ke Google Sheets.</p>
+    </header>
+
+    <!-- Pengaturan Akun GitHub (Disimpan di browser HP/Laptop kamu saja) -->
+    <div class="card">
+      <div class="settings-header" id="toggleSettings">
+        <h2>⚙️ Pengaturan GitHub (Isi Sekali Saja)</h2>
+        <span class="badge-status" id="configBadge">Belum Diisi</span>
+      </div>
+
+      <div class="settings-body" id="settingsBody">
+        <div class="field">
+          <label>Username GitHub</label>
+          <input type="text" id="ghUser" placeholder="contoh: aminpuji" />
+        </div>
+        <div class="field">
+          <label>Nama Repositori</label>
+          <input type="text" id="ghRepo" placeholder="contoh: ide-dapur-kos" />
+        </div>
+        <div class="field">
+          <label>Folder Penyimpanan (Opsional)</label>
+          <input type="text" id="ghFolder" placeholder="contoh: images (kosongkan jika langsung di root)" value="images" />
+        </div>
+        <div class="field">
+          <label>GitHub Personal Access Token (ghp_...)</label>
+          <input type="password" id="ghToken" placeholder="Tempel token ghp_... kamu di sini" />
+        </div>
+        <button class="btn-save" id="saveConfigBtn">Simpan Pengaturan</button>
+      </div>
+    </div>
+
+    <!-- Area Pilih / Drag Foto -->
+    <div class="dropzone" id="dropzone">
+      <div class="dropzone-icon">📸</div>
+      <h3>Tap untuk Pilih Foto Produk</h3>
+      <p>Bisa pilih banyak file .jpg / .png / .webp sekaligus</p>
+      <input type="file" id="fileInput" accept="image/*" multiple />
+    </div>
+
+    <!-- Daftar Hasil Link -->
+    <div class="result-list" id="resultList"></div>
+  </div>
+
+  <script>
+    const ghUser = document.getElementById("ghUser");
+    const ghRepo = document.getElementById("ghRepo");
+    const ghFolder = document.getElementById("ghFolder");
+    const ghToken = document.getElementById("ghToken");
+    const saveConfigBtn = document.getElementById("saveConfigBtn");
+    const configBadge = document.getElementById("configBadge");
+    const settingsBody = document.getElementById("settingsBody");
+    const toggleSettings = document.getElementById("toggleSettings");
+    const dropzone = document.getElementById("dropzone");
+    const fileInput = document.getElementById("fileInput");
+    const resultList = document.getElementById("resultList");
+
+    // Muat pengaturan tersimpan dari LocalStorage browser
+    function loadConfig() {
+      const saved = JSON.parse(localStorage.getItem("gh_uploader_cfg") || "{}");
+      if (saved.user) ghUser.value = saved.user;
+      if (saved.repo) ghRepo.value = saved.repo;
+      if (saved.folder !== undefined) ghFolder.value = saved.folder;
+      if (saved.token) ghToken.value = saved.token;
+
+      if (saved.user && saved.repo && saved.token) {
+        configBadge.textContent = "Siap Digunakan";
+        configBadge.classList.add("ready");
+        settingsBody.classList.add("hidden");
+      }
+    }
+
+    toggleSettings.addEventListener("click", () => {
+      settingsBody.classList.toggle("hidden");
+    });
+
+    saveConfigBtn.addEventListener("click", () => {
+      const cfg = {
+        user: ghUser.value.trim(),
+        repo: ghRepo.value.trim(),
+        folder: ghFolder.value.trim().replace(/^\/+|\/+$/g, ""),
+        token: ghToken.value.trim()
+      };
+      if (!cfg.user || !cfg.repo || !cfg.token) {
+        alert("Mohon lengkapi Username, Nama Repositori, dan Token GitHub.");
+        return;
+      }
+      localStorage.setItem("gh_uploader_cfg", JSON.stringify(cfg));
+      configBadge.textContent = "Siap Digunakan";
+      configBadge.classList.add("ready");
+      settingsBody.classList.add("hidden");
+      alert("Pengaturan berhasil disimpan di browser ini!");
+    });
+
+    // Klik & Drag-Drop File
+    dropzone.addEventListener("click", () => fileInput.click());
+    dropzone.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      dropzone.classList.add("dragover");
+    });
+    dropzone.addEventListener("dragleave", () => dropzone.classList.remove("dragover"));
+    dropzone.addEventListener("drop", (e) => {
+      e.preventDefault();
+      dropzone.classList.remove("dragover");
+      handleFiles(e.dataTransfer.files);
+    });
+    fileInput.addEventListener("change", (e) => handleFiles(e.target.files));
+
+    // Konversi file ke Base64
+    function toBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result.split(",")[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // Proses Upload ke GitHub API
+    async function handleFiles(files) {
+      const cfg = JSON.parse(localStorage.getItem("gh_uploader_cfg") || "{}");
+      if (!cfg.user || !cfg.repo || !cfg.token) {
+        alert("Isi dulu Pengaturan GitHub di bagian atas sebelum mengunggah foto.");
+        settingsBody.classList.remove("hidden");
+        return;
+      }
+
+      for (const file of files) {
+        if (!file.type.startsWith("image/")) continue;
+
+        // Buat nama file aman + timestamp agar tidak pernah bentrok
+        const ext = file.name.split(".").pop().toLowerCase();
+        const cleanBase = file.name
+          .replace(/\.[^/.]+$/, "")
+          .toLowerCase()
+          .replace(/[^a-z0-9]/g, "-")
+          .replace(/-+/g, "-")
+          .slice(0, 25);
+        const finalName = `${cleanBase}-${Date.now().toString().slice(-4)}.${ext}`;
+        const filePath = cfg.folder ? `${cfg.folder}/${finalName}` : finalName;
+
+        // Tampilkan kartu status di layar
+        const itemEl = document.createElement("div");
+        itemEl.className = "result-item";
+        const previewUrl = URL.createObjectURL(file);
+        itemEl.innerHTML = `
+          <img src="${previewUrl}" class="result-thumb" />
+          <div class="result-info">
+            <div class="result-name">${finalName}</div>
+            <div class="status-text">Sedang mengunggah ke GitHub...</div>
+          </div>
+        `;
+        resultList.prepend(itemEl);
+
+        try {
+          const base64Content = await toBase64(file);
+          const apiUrl = `https://api.github.com/repos/${cfg.user}/${cfg.repo}/contents/${filePath}`;
+
+          const res = await fetch(apiUrl, {
+            method: "PUT",
+            headers: {
+              Authorization: `Bearer ${cfg.token}`,
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              message: `Upload gambar produk ${finalName}`,
+              content: base64Content
+            })
+          });
+
+          if (!res.ok) {
+            const errData = await res.json();
+            throw new Error(errData.message || "Gagal upload");
+          }
+
+          // Link publik GitHub Pages
+          const publicUrl = `https://${cfg.user}.github.io/${cfg.repo}/${filePath}`;
+
+          itemEl.innerHTML = `
+            <img src="${previewUrl}" class="result-thumb" />
+            <div class="result-info">
+              <div class="result-name">${finalName}</div>
+              <input type="text" class="result-url" value="${publicUrl}" readonly />
+            </div>
+            <button class="btn-copy" onclick="copyLink(this, '${publicUrl}')">Salin Link</button>
+          `;
+        } catch (err) {
+          itemEl.querySelector(".status-text").textContent = `Gagal: ${err.message}`;
+          itemEl.querySelector(".status-text").style.color = "#DC2626";
+        }
+      }
+      fileInput.value = "";
+    }
+
+    function copyLink(btn, url) {
+      navigator.clipboard.writeText(url);
+      btn.textContent = "Tersalin ✓";
+      btn.classList.add("copied");
+      setTimeout(() => {
+        btn.textContent = "Salin Link";
+        btn.classList.remove("copied");
+      }, 2000);
+    }
+
+    loadConfig();
+  </script>
+</body>
+</html>
