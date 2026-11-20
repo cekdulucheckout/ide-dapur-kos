@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ide Dapur Kos — Katalog Peralatan Dapur Estetik</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg-color: #FAF7F2;
+      --surface-color: #FFFFFF;
+      --text-primary: #2C2621;
+      --text-secondary: #756B62;
+      --accent-wood: #A67B5B;
+      --accent-wood-light: #EFE7DD;
+      --shopee-orange: #EE4D2D;
+      --shopee-orange-hover: #D73211;
+      --border-color: #EAE2D7;
+      --radius-lg: 16px;
+      --radius-md: 10px;
+      --shadow-sm: 0 4px 14px rgba(44, 38, 33, 0.05);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-primary);
+      line-height: 1.5;
+      padding-bottom: 60px;
+    }
+
+    /* Header / Profil */
+    header {
+      background-color: var(--surface-color);
+      border-bottom: 1px solid var(--border-color);
+      padding: 28px 16px 24px;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+
+    .badge-niche {
+      display: inline-block;
+      background-color: var(--accent-wood-light);
+      color: var(--accent-wood);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+
+    header h1 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--text-primary);
+    }
+
+    header p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    /* Search & Filter Bar */
+    .controls {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background-color: rgba(250, 247, 242, 0.92);
+      backdrop-filter: blur(8px);
+      padding: 16px 0 12px;
+      border-bottom: 1px solid rgba(234, 226, 215, 0.6);
+    }
+
+    .search-box {
+      position: relative;
+      margin-bottom: 12px;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 12px 16px 12px 42px;
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-md);
+      background-color: var(--surface-color);
+      font-family: inherit;
+      font-size: 14px;
+      color: var(--text-primary);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-box input:focus {
+      border-color: var(--accent-wood);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-secondary);
+      font-size: 16px;
+      pointer-events: none;
+    }
+
+    .category-pills {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: none;
+    }
+
+    .category-pills::-webkit-scrollbar {
+      display: none;
+    }
+
+    .pill {
+      white-space: nowrap;
+      border: 1px solid var(--border-color);
+      background-color: var(--surface-color);
+      color: var(--text-secondary);
+      padding: 7px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .pill:hover {
+      border-color: var(--accent-wood);
+      color: var(--text-primary);
+    }
+
+    .pill.active {
+      background-color: var(--text-primary);
+      color: #FFFFFF;
+      border-color: var(--text-primary);
+    }
+
+    /* Info Hasil */
+    .result-meta {
+      margin: 16px 0 12px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Grid Produk */
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    @media (min-width: 640px) {
+      .product-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+      }
+      header h1 {
+        font-size: 28px;
+      }
+    }
+
+    @media (min-width: 900px) {
+      .product-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    /* Kartu Produk */
+    .card {
+      background-color: var(--surface-color);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+    }
+
+    .card-image-wrap {
+      position: relative;
+      aspect-ratio: 1 / 1;
+      background-color: #F2ECE4;
+      overflow: hidden;
+    }
+
+    .card-image-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .product-tag {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      background-color: rgba(255, 255, 255, 0.94);
+      color: var(--accent-wood);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 9px;
+      border-radius: 6px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    }
+
+    .card-body {
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    .card-category {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+    }
+
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      flex-grow: 1;
+    }
+
+    .card-price {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent-wood);
+      margin-bottom: 10px;
+    }
+
+    .btn-shopee {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      width: 100%;
+      padding: 10px 12px;
+      background-color: var(--shopee-orange);
+      color: #FFFFFF;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: var(--radius-md);
+      transition: background-color 0.2s;
+    }
+
+    .btn-shopee:hover {
+      background-color: var(--shopee-orange-hover);
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 48px 16px;
+      color: var(--text-secondary);
+      display: none;
+    }
+
+    .empty-state p {
+      margin-bottom: 12px;
+      font-size: 15px;
+    }
+
+    .btn-reset {
+      background-color: var(--accent-wood-light);
+      color: var(--text-primary);
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      margin-top: 48px;
+      padding: 0 16px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="container">
+      <span class="badge-niche">Pinterest Curated Collection</span>
+      <h1>Ide Dapur Kos Estetik</h1>
+      <p>Kumpulan peralatan dapur minimalis, hemat tempat & non-elektronik. Cari nama barang atau pilih kategori di bawah ini.</p>
+    </div>
+  </header>
+
+  <!-- Pencarian & Filter Kategori -->
+  <div class="controls">
+    <div class="container">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Cari nama barang (misal: rak bumbu, spatula, toples)..."
+          autocomplete="off"
+        />
+      </div>
+
+      <div class="category-pills" id="categoryPills">
+        <button class="pill active" data-category="Semua">Semua</button>
+        <button class="pill" data-category="Alat Masak">Alat Masak</button>
+        <button class="pill" data-category="Wadah & Toples">Wadah & Toples</button>
+        <button class="pill" data-category="Rak & Organizer">Rak & Organizer</button>
+        <button class="pill" data-category="Alat Makan">Alat Makan</button>
+        <button class="pill" data-category="Kebersihan Dapur">Kebersihan Dapur</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Daftar Produk -->
+  <main class="container">
+    <div class="result-meta">
+      <span id="productCount">Menampilkan semua produk</span>
+    </div>
+
+    <div class="product-grid" id="productGrid"></div>
+
+    <div class="empty-state" id="emptyState">
+      <p>Barang yang kamu cari belum ditemukan.</p>
+      <button class="btn-reset" id="resetBtn">Tampilkan Semua Produk</button>
+    </div>
+  </main>
+
+  <footer>
+    <p>Beberapa tautan di halaman ini adalah tautan affiliate Shopee.</p>
+  </footer>
+
+  <script>
+    // =========================================================================
+    // DATA PRODUK KAMU (Cukup isi nama, kategori, harga, foto & link Shopee)
+    // =========================================================================
+    const products = [
+      {
+        name: "Set Spatula Silikon Gagang Kayu Aesthetic 11 Pcs + Wadah",
+        category: "Alat Masak",
+        price: "Mulai Rp65.000",
+        tag: "Best Seller",
+        image: "https://images.unsplash.com/photo-1590794056226-79ef3a8147e1?auto=format&fit=crop&w=600&q=80",
+        shopeeLink: "https://s.shopee.co.id/contoh-link-1"
+      },
+      {
+        name: "Rak Bumbu Dapur 2 Susun Minimalis Kayu & Besi Putih",
+        category: "Rak & Organizer",
+        price: "Mulai Rp48.000",
+        tag: "Hemat Tempat",
+        image: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=600&q=80",
+        shopeeLink: "https://s.shopee.co.id/contoh-link-2"
+      },
+      {
+        name: "Botol Minyak Goreng Kaca Estetik Tutup Otomatis 550ml",
+        category: "Wadah & Toples",
+        price: "Mulai Rp22.000",
+        tag: "Anti Tumpah",
+        image: "https://images.unsplash.com/photo-1610701596007-11502861dcfa?auto=format&fit=crop&w=600&q=80",
+        shopeeLink: "https://s.shopee.co.id/contoh-link-3"
+      },
+      {
+        name: "Wajan Penggorengan Anti Lengket Granite Putih 24cm",
+        category: "Alat Masak",
+        price: "Mulai Rp89.000",
+        tag: "Estetik",
+        image: "https://images.unsplash.com/photo-1585515320310-259814833e62?auto=format&fit=crop&w=600&q=80",
+        shopeeLink: "https://s.shopee.co.id/contoh-link-4"
+      },
+      {
+        name: "Toples Bumbu Kaca Tutup Bambu + Stiker Label Dapur",
+        category: "Wadah & Toples",
+        price: "Mulai Rp14.500",
+        tag: "Wajib Punya",
+        image: "https://images.unsplash.com/photo-1606859191214-25806e8e2423?auto=format&fit=crop&w=600&q=80",
+        shopeeLink: "https://s.shopee.co.id/contoh-link-5"
+      },
+      {
+        name: "Rak Pengering Piring Wastafel Lipat Stainless Minimalis",
+        category: "Kebersihan Dapur",
+        price: "Mulai Rp35.000",
+        tag: "Praktis Kos",
+        image: "https://images.unsplash.com/photo-1556911220-bff31c812dba?auto=format&fit=crop&w=600&q=80",
+        shopeeLink: "https://s.shopee.co.id/contoh-link-6"
+      },
+      {
+        name: "Set Mangkuk & Piring Keramik Motif Jepang Pastel",
+        category: "Alat Makan",
+        price: "Mulai Rp39.000",
+        tag: "Rekomendasi",
+        image: "https://images.unsplash.com/photo-1603199506016-b9a594b593c0?auto=format&fit=crop&w=600&q=80",
+        shopeeLink: "https://s.shopee.co.id/contoh-link-7"
+      },
+      {
+        name: "Talenan Kayu Mahoni Food Grade + Holder Berdiri",
+        category: "Alat Masak",
+        price: "Mulai Rp28.000",
+        tag: "Natural",
+        image: "https://images.unsplash.com/photo-1594385208974-2e75f8d7bb48?auto=format&fit=crop&w=600&q=80",
+        shopeeLink: "https://s.shopee.co.id/contoh-link-8"
+      }
+    ];
+
+    // =========================================================================
+    // LOGIKA PENCARIAN & FILTER
+    // =========================================================================
+    const productGrid = document.getElementById("productGrid");
+    const searchInput = document.getElementById("searchInput");
+    const categoryPills = document.getElementById("categoryPills");
+    const productCount = document.getElementById("productCount");
+    const emptyState = document.getElementById("emptyState");
+    const resetBtn = document.getElementById("resetBtn");
+
+    let activeCategory = "Semua";
+    let searchQuery = "";
+
+    function renderProducts() {
+      const filtered = products.filter((item) => {
+        const matchCategory =
+          activeCategory === "Semua" || item.category === activeCategory;
+        const q = searchQuery.toLowerCase().trim();
+        const matchSearch =
+          item.name.toLowerCase().includes(q) ||
+          item.category.toLowerCase().includes(q) ||
+          (item.tag && item.tag.toLowerCase().includes(q));
+        return matchCategory && matchSearch;
+      });
+
+      productGrid.innerHTML = "";
+
+      if (filtered.length === 0) {
+        emptyState.style.display = "block";
+        productCount.textContent = "0 produk ditemukan";
+        return;
+      }
+
+      emptyState.style.display = "none";
+      productCount.textContent = `Menampilkan ${filtered.length} dari ${products.length} produk`;
+
+      filtered.forEach((item) => {
+        const card = document.createElement("article");
+        card.className = "card";
+        card.innerHTML = `
+          <div class="card-image-wrap">
+            <img src="${item.image}" alt="${item.name}" loading="lazy" />
+            ${item.tag ? `<span class="product-tag">${item.tag}</span>` : ""}
+          </div>
+          <div class="card-body">
+            <span class="card-category">${item.category}</span>
+            <h2 class="card-title">${item.name}</h2>
+            <div class="card-price">${item.price}</div>
+            <a href="${item.shopeeLink}" target="_blank" rel="noopener noreferrer nofollow" class="btn-shopee">
+              Beli di Shopee ↗
+            </a>
+          </div>
+        `;
+        productGrid.appendChild(card);
+      });
+    }
+
+    // Event Pencarian
+    searchInput.addEventListener("input", (e) => {
+      searchQuery = e.target.value;
+      renderProducts();
+    });
+
+    // Event Filter Kategori
+    categoryPills.addEventListener("click", (e) => {
+      if (!e.target.classList.contains("pill")) return;
+      document.querySelectorAll(".pill").forEach((btn) => btn.classList.remove("active"));
+      e.target.classList.add("active");
+      activeCategory = e.target.dataset.category;
+      renderProducts();
+    });
+
+    // Event Reset
+    resetBtn.addEventListener("click", () => {
+      searchQuery = "";
+      searchInput.value = "";
+      activeCategory = "Semua";
+      document.querySelectorAll(".pill").forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.category === "Semua");
+      });
+      renderProducts();
+    });
+
+    // Render awal
+    renderProducts();
+  </script>
+</body>
+</html>
